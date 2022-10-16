@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/userRoutes");
 const drawingRouter = require("./routes/drawingRoutes");
@@ -11,22 +12,9 @@ const salesRouter = require("./routes/salesRoutes");
 const projectRouter = require("./routes/projectRoutes");
 const settingsRouter = require("./routes/settingsRoutes");
 const globalErrorHandler = require("./controllers/errorController");
+dotenv.config({ path: "./config.env" });
 
 const app = express();
-
-// app.engine(
-//   "hbs",
-//   handlebars.engine({
-//     layoutsDir: `${__dirname}/views/layouts`,
-//     extname: "hbs",
-//     defaultLayout: "index",
-//     partialsDir: [
-//       //  path to your partials
-//       path.join(__dirname, "views/partials"),
-//     ],
-//   })
-// );
-// app.set("view engine", "hbs");
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -49,10 +37,11 @@ app.use("/api/v1/settings", settingsRouter);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/dist/")));
-  app.get(/.*/, (req, res) => {
+  app.get("*", (req, res) => {
     res.sendFile(__dirname + "/dist/index.html");
   });
 }
+
 app.use(globalErrorHandler);
 
 module.exports = app;
